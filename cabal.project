@@ -11,10 +11,10 @@ repository cardano-haskell-packages
     d4a35cd3121aa00d18544bb0ac01c3e1691d618f462c46129271bccf39f7e8ee
 
 
-index-state: 2022-09-26T22:25:36Z
-index-state: 
-  , hackage.haskell.org      2022-09-26T22:25:36Z
-  , cardano-haskell-packages 2022-10-25T17:33:07Z
+index-state: 2023-04-08T22:25:36Z
+index-state:
+  , hackage.haskell.org      2023-04-08T22:25:36Z
+  , cardano-haskell-packages 2023-04-08T17:33:07Z
 
 packages: .
 
@@ -39,8 +39,8 @@ test-show-details: direct
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/cardano-node
-    tag: 1.35.4
-    --sha256: 1j01m2cp2vdcl26zx9xmipr551v3b2rz9kfn9ik8byfwj1z7652r
+    tag: be1dd96d8002f4d875ec096359341ce5fe703e12
+    --sha256: 0b0k68y79mvmgzv4z001hs29h40ksb0i9ykg1j20b4724i8ck71y
     subdir:
       cardano-api
       cardano-git-rev
@@ -54,8 +54,8 @@ source-repository-package
 source-repository-package
   type: git
   location: https://github.com/input-output-hk/cardano-wallet
-  tag: v2022-12-14
-  --sha256: sha256-lz3bi711qORionkcfduC+AXGP6Ii+uWiVHRmRZmvfb8=
+  tag: 09c10d3de6a5ae55e34a0587f7576bb3f50aeef1
+  --sha256: 00i8r1y5xd6yxk5vsisp4yr1z8b6ic1iik1r8pjbm6lifbng892d
   subdir:
     lib/balance-tx
     lib/coin-selection
@@ -69,12 +69,30 @@ source-repository-package
     lib/wai-middleware-logging
     lib/wallet
 
+-- ntp-client on CHaP not compatible with GHC 9.2
+source-repository-package
+  type: git
+  location: https://github.com/input-output-hk/ouroboros-network
+  tag: 81f9d1e4f5b1d3756508414d1c5ed96088773276
+  --sha256: 1lb0f07bix2x38a7zkj8bfjplbvy1rbfnj7b6aip6i6mp5ndnm35
+  subdir:
+    ntp-client
+
 -- Using an in house fork as upstream lacks desired capabilities and uses incompatible dependencies.
 source-repository-package
   type: git
   location: https://github.com/geniusyield/plutus-simple-model
-  tag: 7ba435b3522f56fb1ab5db491b7821b68d7e0682
-  --sha256: sha256-rorwvnN8qkaO4/WgtvJVqg7EW09Z6e1bXnfFu0fu/aU=
+  tag: 22b873438d0a4176bd001575cd3fe2c391c38fce
+  --sha256: 0qgvdlqj1ixm8a6pgg10w5nn4hd4kbjybp8g97mvz1j0m83n9n3q
+
+source-repository-package
+  type: git
+  location: https://github.com/plutonomicon/plutarch-plutus
+  tag: c14ad83479706566fe22e7b7b50b696043326c8f
+  --sha256: 1a9asflg9dgw60q75j1ihqawl8s2pjwjiah38fwz3w6r1dai4yp8
+  subdir:
+    .
+    plutarch-extra
 
 -- Everything below is essentially copied from cardano-wallet's cabal.project.
 
@@ -115,26 +133,10 @@ source-repository-package
     --sha256: 1ia8vlqghis92cla8qmqa6kh8f3jn29b01fshyk5hmgy5373s684
 
 source-repository-package
-  type: git
-  location: https://github.com/input-output-hk/ekg-forward
-  tag: 297cd9db5074339a2fb2e5ae7d0780debb670c63
-  --sha256: 1zcwry3y5rmd9lgxy89wsb3k4kpffqji35dc7ghzbz603y1gy24g
-
-source-repository-package
     type: git
     location: https://github.com/input-output-hk/cardano-crypto
     tag: f73079303f663e028288f9f4a9e08bcca39a923e
     --sha256: 1n87i15x54s0cjkh3nsxs4r1x016cdw1fypwmr68936n3xxsjn6q
-
-source-repository-package
-  type: git
-  location: https://github.com/input-output-hk/io-sim
-  tag: 57e888b1894829056cb00b7b5785fdf6a74c3271
-  --sha256: 1kv8lwmrw1c0g03jy3i3fgk3c8d47ihjcslg295djqj442y95y2f
-  subdir:
-    io-classes
-    io-sim
-    strict-stm
 
 -- -------------------------------------------------------------------------
 -- Constraints tweaking
@@ -172,46 +174,42 @@ constraints:
   , Cabal >= 3.4.0.0
   , async-timer >= 0.2.0.0
   , unliftio-core >= 0.2.0.1
-  , cardano-api == 1.35.4
-  , cardano-node == 1.35.4
-  , generic-arbitrary == 0.2.2
+--  , cardano-api == 1.35.4
+--  , cardano-node == 1.35.4
+--  , generic-arbitrary == 0.2.2
   , iohk-monitoring >= 0.1.11
 
   -- Could probably be bumped with minor work in the wallet
-  , resource-pool == 0.2.3.2
+--  , resource-pool == 0.2.3.2
 
   -- TH Name shadowing warnings need to be addressed when bumping to 2.13.3.5
-  , persistent == 2.13.3.3
+--  , persistent == 2.13.3.3
 
   -- Copied from cardano-node's cabal.project:
-  , bimap >= 0.4.0
-  , libsystemd-journal >= 1.4.4
-  , systemd >= 2.3.0
-    -- systemd-2.3.0 requires at least network 3.1.1.0 but it doesn't declare
-    -- that dependency
-  , network >= 3.1.1.0
   , HSOpenSSL >= 0.11.7.2
-  , algebraic-graphs < 0.7
-  , protolude < 0.3.1
-  , cardano-prelude == 0.1.0.0
-  , base-deriving-via == 0.1.0.0
-  , cardano-binary  == 1.5.0
-  , cardano-binary-test == 1.3.0
-  , cardano-crypto-class  == 2.0.0.0.1
-  , cardano-crypto-praos  == 2.0.0.0.1
-  , cardano-crypto-tests  == 2.0.0.0.1
-  , cardano-slotting  == 0.1.0.0
-  , measures == 0.1.0.0
-  , orphans-deriving-via == 0.1.0.0
-  , strict-containers == 0.1.0.0
-  , plutus-core == 1.0.0.1
-  , plutus-ledger-api == 1.0.0.1
-  , plutus-tx == 1.0.0.0
-  , plutus-tx-plugin == 1.0.0.0
-  , prettyprinter-configurable == 0.1.0.0
-  , plutus-ghc-stub == 8.6.5
-  , word-array == 0.1.0.0
-  , word-array == 0.1.0.0
+--  , algebraic-graphs < 0.7
+--  , protolude < 0.3.1
+--  , cardano-prelude == 0.1.0.0
+--  , base-deriving-via == 0.1.0.0
+--  , cardano-binary  == 1.5.0
+--  , cardano-binary-test == 1.3.0
+--  , cardano-crypto-class  == 2.0.0.0.1
+--  , cardano-crypto-praos  == 2.0.0.0.1
+--  , cardano-crypto-tests  == 2.0.0.0.1
+
+-- cardano-slotting 0.1.1.0 has duplicate JSON instances for SystemStart, conflicting with cardano-api
+    , cardano-slotting == 0.1.0.2
+
+--  , measures == 0.1.0.0
+--  , orphans-deriving-via == 0.1.0.0
+--  , strict-containers == 0.1.0.0
+--  , plutus-core == 1.0.0.1
+  , plutus-ledger-api == 1.1.0.0
+--  , plutus-tx == 1.0.0.0
+--  , plutus-tx-plugin == 1.0.0.0
+--  , prettyprinter-configurable == 0.1.0.0
+--  , plutus-ghc-stub == 8.6.5
+--  , word-array == 0.1.0.0
 
 -- ----------------------------------------------------------------
 -- Flags for dependencies

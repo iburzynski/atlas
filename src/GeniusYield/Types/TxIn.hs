@@ -81,8 +81,8 @@ txInToApi useInline (GYTxIn oref m) = (txOutRefToApi oref, Api.BuildTxWith $ f m
     f GYTxInWitnessKey = Api.KeyWitness Api.KeyWitnessForSpending
     f (GYTxInWitnessScript v d r) =
         Api.ScriptWitness Api.ScriptWitnessForSpending $ g v
-        (if useInline then Api.InlineScriptDatum else Api.ScriptDatumForTxIn $ datumToApi' d) -- TODO: Investigate if we can use Api.InlineScriptDatum in TxIn.hs #21 (https://github.com/geniusyield/atlas/issues/21)
-        (redeemerToApi r)
+        (if useInline then Api.InlineScriptDatum else Api.ScriptDatumForTxIn $ Api.unsafeHashableScriptData $ datumToApi' d) -- TODO: Investigate if we can use Api.InlineScriptDatum in TxIn.hs #21 (https://github.com/geniusyield/atlas/issues/21)
+        (Api.unsafeHashableScriptData $ redeemerToApi r)
         (Api.ExecutionUnits 0 0)
 
     g (GYInScript v)        = validatorToApiPlutusScriptWitness v

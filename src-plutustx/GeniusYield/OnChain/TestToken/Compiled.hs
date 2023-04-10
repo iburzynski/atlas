@@ -12,7 +12,7 @@ module GeniusYield.OnChain.TestToken.Compiled (
     originalTestTokenPolicy,
 ) where
 
-import           Plutus.V1.Ledger.Api
+import           PlutusLedgerApi.V2
 
 import qualified PlutusTx
 
@@ -22,8 +22,8 @@ originalTestTokenPolicy
     :: Integer          -- ^ count
     -> TokenName        -- ^ token name (e.g. @GOLD@)
     -> TxOutRef         -- ^ utxo to base token on
-    -> MintingPolicy
-originalTestTokenPolicy count tn utxo = mkMintingPolicyScript
+    -> SerialisedScript
+originalTestTokenPolicy count tn utxo = serialiseCompiledCode
     $ $$(PlutusTx.compile [|| mkTestTokenPolicy ||])
     `PlutusTx.applyCode`
      PlutusTx.liftCode count

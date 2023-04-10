@@ -17,7 +17,7 @@ module GeniusYield.Types.Redeemer (
 ) where
 
 import qualified Cardano.Api          as Api
-import qualified Plutus.V1.Ledger.Api as Plutus
+import qualified PlutusLedgerApi.V2   as Plutus
 
 newtype GYRedeemer = GYRedeemer Plutus.BuiltinData
   deriving (Eq)

@@ -38,7 +38,7 @@ import qualified Data.Swagger.Lens                ()
 import qualified Data.Text                        as T
 import qualified Data.Text                        as Text
 import qualified Data.Text.Encoding               as TE
-import qualified Plutus.V1.Ledger.Api             as Plutus
+import qualified PlutusLedgerApi.V2               as Plutus
 import qualified PlutusTx.Builtins.Internal       as Plutus
 import qualified Text.Printf                      as Printf
 import qualified Web.HttpApiData                  as Web
@@ -87,9 +87,8 @@ txOutRefFromPlutus :: Plutus.TxOutRef -> Either PlutusToCardanoError GYTxOutRef
 txOutRefFromPlutus (Plutus.TxOutRef tid@(Plutus.TxId (Plutus.BuiltinByteString bs)) ix) = coerce . Api.TxIn <$> etid <*> eix
   where
     etid :: Either PlutusToCardanoError Api.TxId
-    etid = maybe
-        (Left $ UnknownPlutusToCardanoError $ Text.pack $ "txOutRefFromPlutus: invalid txOutRefId " ++ show tid)
-        Right
+    etid = first
+        (const $ UnknownPlutusToCardanoError $ Text.pack $ "txOutRefFromPlutus: invalid txOutRefId " ++ show tid)
         $ Api.deserialiseFromRawBytes Api.AsTxId bs
 
     eix :: Either PlutusToCardanoError Api.TxIx
@@ -142,7 +141,7 @@ instance Web.FromHttpApiData GYTxOutRef where
             tx  <- Base16.decodeLenient <$> Atto.takeWhile1 isHexDigit
             _   <- Atto.char '#'
             ix  <- Atto.decimal
-            tx' <- maybe (fail $ "not txid bytes: " ++ show tx) return $ Api.deserialiseFromRawBytes Api.AsTxId tx
+            tx' <- either (const $ fail $ "not txid bytes: " ++ show tx) return $ Api.deserialiseFromRawBytes Api.AsTxId tx
             return (GYTxOutRef (Api.TxIn tx' (Api.TxIx ix)))
 
 instance Web.ToHttpApiData GYTxOutRef where
@@ -222,7 +221,7 @@ instance Web.FromHttpApiData GYTxOutRefCbor where
       unless (LBS.null rest) $ Left "Left overs in input"
       case cbor of
           CBOR.TList [CBOR.TList [CBOR.TBytes tx, CBOR.TInt ix], _] -> do
-              tx' <- maybe (Left $ T.pack $ "not txid bytes: " ++ show tx) return $ Api.deserialiseFromRawBytes Api.AsTxId tx
+              tx' <- first (const $ T.pack $ "not txid bytes: " ++ show tx) $ Api.deserialiseFromRawBytes Api.AsTxId tx
               unless (ix >= 0) $ Left "negative ix"
               return (GYTxOutRefCbor (GYTxOutRef (Api.TxIn tx' (Api.TxIx (fromIntegral ix)))))
           _ -> Left "Invalid TxIn CBOR structure"

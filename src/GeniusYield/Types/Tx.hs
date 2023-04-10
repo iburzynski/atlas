@@ -37,7 +37,7 @@ import qualified Data.Swagger                 as Swagger
 import qualified Data.Swagger.Internal.Schema as Swagger
 import qualified Data.Text                    as T
 import qualified Data.Text.Encoding           as TE
-import qualified Plutus.V1.Ledger.Api         as Plutus
+import qualified PlutusLedgerApi.V2           as Plutus
 import qualified PlutusTx.Builtins.Internal   as Plutus
 import qualified Text.Printf                  as Printf
 import qualified Web.HttpApiData              as Web
@@ -193,5 +193,5 @@ txIdToApi = coerce
 txIdFromApi :: Api.TxId -> GYTxId
 txIdFromApi = coerce
 
-txIdFromPlutus :: Plutus.TxId -> Maybe GYTxId
-txIdFromPlutus (Plutus.TxId (Plutus.BuiltinByteString bs)) = txIdFromApi <$> Api.deserialiseFromRawBytes Api.AsTxId bs
+txIdFromPlutus :: Plutus.TxId -> Either String GYTxId
+txIdFromPlutus (Plutus.TxId (Plutus.BuiltinByteString bs)) = bimap show txIdFromApi $ Api.deserialiseFromRawBytes Api.AsTxId bs

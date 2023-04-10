@@ -16,7 +16,7 @@ module GeniusYield.Types.Datum (
     datumFromPlutus,
     datumFromPlutus',
     datumFromPlutusData,
-    hashDatum,
+--    hashDatum,
     -- * Datum hash
     GYDatumHash,
     datumHashFromHex,
@@ -38,7 +38,7 @@ import qualified Data.Text                            as Txt
 import qualified Database.PostgreSQL.Simple           as PQ
 import qualified Database.PostgreSQL.Simple.FromField as PQ (FromField (..), returnError)
 import qualified Database.PostgreSQL.Simple.ToField   as PQ
-import qualified Plutus.V1.Ledger.Api                 as Plutus
+import qualified PlutusLedgerApi.V2                   as Plutus
 
 import           GeniusYield.Imports
 import           GeniusYield.Types.Ledger
@@ -95,8 +95,8 @@ dataToScriptData (Plutus.I n)         = Api.ScriptDataNumber n
 dataToScriptData (Plutus.B bs)        = Api.ScriptDataBytes bs
 
 -- | Returns the 'GYDatumHash' of the given 'GYDatum'
-hashDatum :: GYDatum -> GYDatumHash
-hashDatum = datumHashFromApi . Api.hashScriptData . datumToApi'
+-- hashDatum :: GYDatum -> GYDatumHash
+-- hashDatum = datumHashFromApi . Api.hashScriptDataBytes . Api.unsafeHashableScriptData . datumToApi'
 
 -------------------------------------------------------------------------------
 -- DatumHash
@@ -113,8 +113,8 @@ instance PQ.FromField GYDatumHash where
     fromField f bs' = do
         PQ.Binary bs <- PQ.fromField f bs'
         case Api.deserialiseFromRawBytes (Api.AsHash Api.AsScriptData) bs of
-            Just dh -> return (datumHashFromApi dh)
-            Nothing -> PQ.returnError PQ.ConversionFailed f "datum hash does not unserialise"
+            Right dh -> return (datumHashFromApi dh)
+            Left _ -> PQ.returnError PQ.ConversionFailed f "datum hash does not unserialise"
 
 instance PQ.ToField GYDatumHash where
     toField (GYDatumHash dh) = PQ.toField (PQ.Binary (Api.serialiseToRawBytes dh))
@@ -123,8 +123,7 @@ datumHashFromHex :: String -> Maybe GYDatumHash
 datumHashFromHex = rightToMaybe . datumHashFromHexE
 
 datumHashFromBS :: ByteString -> Either String GYDatumHash
-datumHashFromBS = fmap datumHashFromApi
-    . maybeToRight "RawBytes GYDatumHash decode fail"
+datumHashFromBS = bimap (const "RawBytes GYDatumHash decode fail") datumHashFromApi
     . Api.deserialiseFromRawBytes (Api.proxyToAsType @(Api.Hash Api.ScriptData) Proxy)
 
 datumHashFromHexE :: String -> Either String GYDatumHash

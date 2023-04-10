@@ -14,7 +14,7 @@ build-type:    Simple
 category:      Blockchain, Cardano, Framework
 homepage:      https://github.com/geniusyield/atlas#readme
 bug-reports:   https://github.com/geniusyield/atlas/issues
-extra-source-files: 
+extra-source-files:
   README.md
 
 source-repository head
@@ -144,11 +144,11 @@ library
     , deriving-aeson
     , async
     , attoparsec
-    , base                         ^>=4.14.1.0
+    , base                         ^>=4.16.4.0
     , base16-bytestring
     , bytestring
     , cache
-    , cardano-api                  ^>=1.35
+    , cardano-api                  ^>=1.36
     , cardano-balance-tx
     , cardano-binary
     , cardano-coin-selection
@@ -179,7 +179,7 @@ library
     , network-uri
     , ouroboros-consensus
     , ouroboros-consensus-cardano
-    , ouroboros-network
+--    , ouroboros-network
     , plutus-ledger-api
     , plutus-simple-model
     , plutus-tx

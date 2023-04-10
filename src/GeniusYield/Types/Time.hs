@@ -30,7 +30,7 @@ import qualified Data.Time.Clock              as Time
 import qualified Data.Time.Clock.POSIX        as Time
 import           Data.Time.Format.Internal    (FormatTime (..), ParseTime (..))
 import qualified Data.Time.Format.ISO8601     as Time
-import qualified Plutus.V1.Ledger.Api         as Plutus
+import qualified PlutusLedgerApi.V2           as Plutus
 import qualified Web.HttpApiData              as Web
 
 -------------------------------------------------------------------------------

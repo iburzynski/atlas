@@ -25,8 +25,8 @@ import qualified Cardano.Api                      as Api
 import qualified Cardano.Api.Shelley              as Api.S
 
 data PlutusVersion
-    = 'PlutusV1
-    | 'PlutusV2
+    = PlutusV1
+    | PlutusV2
   deriving (Eq, Show)
 
 data SingPlutusVersion (v :: PlutusVersion) where
